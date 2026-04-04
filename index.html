@@ -366,7 +366,7 @@ async function fetchServers() {
   const serverfullValue = document.getElementById('isFull').value;
   const hasSampleValue = document.getElementById('hasSample').value;
 
-  const limit = document.getElementById('limit').value || 5;
+  const limit = document.getElementById('limit').value || 10;
   let page = parseInt(document.getElementById('page').value) || currentPage;
 
   if (page < 1) page = 1;
