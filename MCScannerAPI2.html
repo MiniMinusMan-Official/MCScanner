@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MC Scanner v2.2 lol</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            surface: { 50: '#f8f8f8', 100: '#1a1a1e', 200: '#141417', 300: '#0e0e11', 400: '#0a0a0c' },
+            accent: { DEFAULT: '#c084fc', dim: '#7c3aed', bright: '#e0b0ff' },
+            mint: { DEFAULT: '#6ee7b7', dim: '#047857' },
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #09090b;
+      color: #d4d4d8;
+      font-family: 'Inter', system-ui, sans-serif;
+      overflow-x: hidden;
+    }
+	
+	#credit-count {
+	  transition: all 2s ease-out;
+	  display: inline-block;
+	}
+	
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 99px; }
+    ::-webkit-scrollbar-thumb:hover { background: #3f3f46; }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.025;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-repeat: repeat;
+      background-size: 180px;
+    }
+    .ambient-glow {
+      position: fixed;
+      top: -30%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80%;
+      height: 50%;
+      background: radial-gradient(ellipse at center, rgba(192, 132, 252, 0.06) 0%, rgba(109, 40, 217, 0.03) 40%, transparent 70%);
+      z-index: 0;
+      pointer-events: none;
+    }
+    @keyframes enterUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .enter-up {
+      animation: enterUp 0.45s ease-out forwards;
+    }
+    .card {
+      background: #111113;
+      border: 1px solid #1e1e22;
+      border-radius: 14px;
+    }
+    .card-inset {
+      background: #0c0c0e;
+      border: 1px solid #18181b;
+      border-radius: 10px;
+    }
+    select, input[type="number"], input[type="text"], input:not([type]) {
+      background: #0f0f12 !important;
+      border: 1px solid #27272a !important;
+      color: #e4e4e7 !important;
+      border-radius: 8px !important;
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 13px;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    select:focus, input:focus {
+      border-color: #7c3aed !important;
+      box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.12) !important;
+      outline: none;
+    }
+    select {
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23a1a1aa' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e") !important;
+      background-position: right 0.6rem center !important;
+      background-repeat: no-repeat !important;
+      background-size: 1.1em 1.1em !important;
+      appearance: none;
+      cursor: pointer;
+    }
+    tbody tr {
+      transition: background 0.15s ease;
+      border-left: 2px solid transparent;
+    }
+    tbody tr:hover {
+      background: #16161a !important;
+      border-left-color: #7c3aed;
+    }
+    .online-row { background: linear-gradient(90deg, rgba(16, 185, 129, 0.03) 0%, transparent 60%); }
+    .btn-primary {
+      background: #7c3aed;
+      color: #fff;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      transition: all 0.15s ease;
+      cursor: pointer;
+    }
+    .btn-primary:hover { background: #6d28d9; }
+    .btn-primary:active { transform: scale(0.97); }
+    .btn-secondary {
+      background: #18181b;
+      color: #a1a1aa;
+      font-weight: 500;
+      border: 1px solid #27272a;
+      border-radius: 8px;
+      transition: all 0.15s ease;
+      cursor: pointer;
+    }
+    .btn-secondary:hover { background: #1f1f23; color: #d4d4d8; border-color: #3f3f46; }
+    .btn-secondary:active { transform: scale(0.97); }
+    .btn-accent {
+      background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+      color: #fff;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      transition: all 0.15s ease;
+      cursor: pointer;
+    }
+    .btn-accent:hover { opacity: 0.9; }
+    .btn-accent:active { transform: scale(0.97); }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+    .pill-yes { background: rgba(239, 68, 68, 0.1); color: #f87171; }
+    .pill-no { background: rgba(63, 63, 70, 0.5); color: #71717a; }
+    .pill-version { background: #18181b; color: #a1a1aa; border: 1px solid #27272a; }
+    .stagger > * { opacity: 0; animation: enterUp 0.35s ease-out forwards; }
+    .stagger > *:nth-child(1) { animation-delay: 0.02s; }
+    .stagger > *:nth-child(2) { animation-delay: 0.04s; }
+    .stagger > *:nth-child(3) { animation-delay: 0.06s; }
+    .stagger > *:nth-child(4) { animation-delay: 0.08s; }
+    .stagger > *:nth-child(5) { animation-delay: 0.10s; }
+    .stagger > *:nth-child(6) { animation-delay: 0.12s; }
+    .stagger > *:nth-child(7) { animation-delay: 0.14s; }
+    .stagger > *:nth-child(8) { animation-delay: 0.16s; }
+    .stagger > *:nth-child(9) { animation-delay: 0.18s; }
+    .stagger > *:nth-child(10) { animation-delay: 0.20s; }
+  </style>
+</head>
+<body class="flex flex-col items-center min-h-screen">
+<div class="ambient-glow"></div>
+<div class="w-full max-w-6xl px-5 py-14 relative z-10">
+  <header class="mb-12 enter-up">
+
+    <h1 class="text-3xl md:text-4xl font-extrabold text-zinc-100 tracking-tight leading-tight mb-2">
+      Server Scanner
+    </h1>
+    <p class="text-sm text-zinc-500 max-w-lg leading-relaxed">
+      <span class="text-red-400/80">dont use this html to grief servers cause its prohibited.</span>
+    </p>
+  </header>
+  <div class="card p-5 mb-6 enter-up" style="animation-delay:0.06s;opacity:0">
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-4">
+      <div class="flex flex-col gap-1.5">
+        <label class="text-[11px] font-semibold text-zinc-500 uppercase tracking-wide">Players</label>
+        <select id="hasPlayers" class="p-2.5">
+          <option value="any">Any</option>
+          <option value="true">Active only</option>
+        </select>
+      </div>
+      <div class="flex flex-col gap-1.5">
+        <label class="text-[11px] font-semibold text-zinc-500 uppercase tracking-wide">Whitelist</label>
+        <select id="hasWhitelist" class="p-2.5">
+          <option value="any">Any</option>
+          <option value="true">Enabled</option>
+          <option value="false">Disabled</option>
+        </select>
+      </div>
+      <div class="flex flex-col gap-1.5">
+        <label class="text-[11px] font-semibold text-zinc-500 uppercase tracking-wide">Auth</label>
+        <select id="cracked" class="p-2.5">
+          <option value="any">Any</option>
+          <option value="true">Cracked</option>
+          <option value="false">Premium</option>
+        </select>
+      </div>
+      <div class="flex flex-col gap-1.5">
+        <label class="text-[11px] font-semibold text-zinc-500 uppercase tracking-wide">Player sample</label>
+        <select id="hasSample" class="p-2.5">
+          <option value="any">Any</option>
+          <option value="true">Has sample</option>
+          <option value="false">No sample</option>
+        </select>
+      </div>
+	  <div class="flex flex-col gap-1.5">
+        <label class="text-[11px] font-semibold text-zinc-500 uppercase tracking-wide">Server Full</label>
+        <select id="isFull" class="p-2.5">
+          <option value="any">Any</option>
+          <option value="true">Yes</option>
+          <option value="false">No</option>
+        </select>
+      </div>
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-6 gap-3">
+      <input list="versions" id="version" placeholder="Version" class="p-2.5">
+      <datalist id="versions">
+        <option value="1.21.11"><option value="1.20.1"><option value="1.16.5"><option value="1.16.1"><option value="1.12.2"><option value="1.8.9"><option value="1.8">
+      </datalist>
+      <input list="countries" id="country" placeholder="Country" class="p-2.5">
+      <datalist id="countries">
+      </datalist>
+      <input id="limit" type="number" placeholder="Limit" class="p-2.5">
+      <input id="page" type="number" placeholder="Page" class="p-2.5">
+      <button onclick="fetchServers()" class="btn-primary p-2.5 flex items-center justify-center gap-2 text-sm">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        Search
+      </button>
+      <button onclick="feelingLucky()" class="btn-secondary p-2.5 flex items-center justify-center gap-2 text-sm">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 18h1.4c1.3 0 2.5-.6 3.3-1.7l6.1-8.6c.7-1.1 2-1.7 3.3-1.7H22"/><path d="m18 2 4 4-4 4"/><path d="M2 6h1.9c1.5 0 2.9.9 3.6 2.2"/><path d="M22 18h-5.9c-1.3 0-2.6-.7-3.3-1.8l-.5-.8"/><path d="m18 14 4 4-4 4"/></svg>
+        Shuffle
+      </button>
+    </div>
+    <div class="flex flex-col sm:flex-row justify-between items-center mt-5 pt-4 border-t border-zinc-800/60 gap-3">
+      <div class="flex gap-1.5">
+        <button onclick="prevPage()" class="btn-secondary px-3.5 py-1.5 text-xs flex items-center gap-1.5">&larr; Prev</button>
+        <button onclick="nextPage()" class="btn-secondary px-3.5 py-1.5 text-xs flex items-center gap-1.5">Next &rarr;</button>
+      </div>
+      <div class="flex items-center gap-3 text-[11px] font-mono">
+        <div id="creditBox" class="text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-md border border-emerald-500/15">Credits: <span id="credit-count" class="font-bold">0</span></div>
+
+        <div id="timeBox" class="text-zinc-500 bg-zinc-800/60 px-2.5 py-1 rounded-md border border-zinc-700/40">Reset: unknown</div>
+        <div id="apiBox"></div>
+      </div>
+    </div>
+  </div>
+  <div id="tableView" class="enter-up" style="animation-delay:0.12s;opacity:0">
+    <div class="card overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse text-[13px] whitespace-nowrap">
+          <thead>
+            <tr class="border-b border-zinc-800 text-[11px] text-zinc-500 uppercase tracking-wide font-semibold">
+              <th class="px-5 py-3.5">IP</th>
+              <th class="px-5 py-3.5">Port</th>
+              <th class="px-5 py-3.5">Version</th>
+              <th class="px-5 py-3.5">Players</th>
+              <th class="px-5 py-3.5">Country</th>
+              <th class="px-5 py-3.5">Org</th>
+              <th class="px-5 py-3.5 text-center">Cracked</th>
+              <th class="px-5 py-3.5 text-center">Whitelist</th>
+              <th class="px-5 py-3.5">Seen</th>
+            </tr>
+          </thead>
+          <tbody id="results" class="divide-y divide-zinc-800/50">
+            <tr>
+              <td colspan="9" class="px-5 py-16 text-center text-zinc-600 text-xs">
+                Hit <strong class="text-zinc-500">Search</strong> or <strong class="text-zinc-500">Shuffle</strong> to find servers.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div id="detailView" class="hidden enter-up card p-6 md:p-8 mt-4 relative overflow-hidden">
+    <button onclick="goBack()" class="mb-6 btn-secondary px-3.5 py-2 text-sm flex items-center gap-2">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+      Back to results
+    </button>
+    <div id="detailContent" class="text-zinc-300 relative z-10"></div>
+  </div>
+</div>
+
+<script>
+
+const countryList = document.getElementById('countries');
+const url = 'https://raw.githubusercontent.com/kgurchiek/Minecraft-Server-Scanner-Discord-Bot/main/countryCodes.json';
+
+async function populateCountries() {
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+    data.forEach(item => {
+      const option = document.createElement('option');
+      option.value = item.code; 
+      option.textContent = item.name; 
+      
+      countryList.appendChild(option);
+    });
+  } catch (error) {
+    console.error('fuck you ', error);
+  }
+}
+populateCountries();
+
+async function loadCountries() {
+  const response = await fetch(url);
+  countryData = await response.json();
+}
+
+loadCountries();
+
+let currentPage = 1;
+let lastServers = [];
+
+function intToIP(n) {
+  const a = Math.floor(n / (256 ** 3)) % 256;
+  const b = Math.floor(n / (256 ** 2)) % 256;
+  const c = Math.floor(n / (256 ** 1)) % 256;
+  const d = n % 256;
+  return `${a}.${b}.${c}.${d}`;
+}
+
+function tick(val) {
+  if (val === true) return '<div class="flex justify-center"><span class="pill pill-yes">YES</span></div>';
+  if (val === false) return '<div class="flex justify-center"><span class="pill pill-no">NO</span></div>';
+  return '<div class="text-zinc-700 text-center">&mdash;</div>';
+}
+
+function timeAgo(unixTimestamp) {
+  const now = new Date();
+  const past = new Date(unixTimestamp * 1000);
+  const secondsPast = Math.floor((now - past) / 1000);
+
+  if (secondsPast < 60) return `${secondsPast}s ago`;
+  if (secondsPast < 3600) return `${Math.floor(secondsPast / 60)}m ago`;
+  if (secondsPast < 86400) return `${Math.floor(secondsPast / 3600)}h ago`;
+  return `${Math.floor(secondsPast / 86400)}d ago`;
+}
+
+async function fetchServers() {
+  const version = document.getElementById('version').value;
+  
+  const country = document.getElementById('country').value;
+  const countryMatch = countryData.find(c => c.name === country);
+  const countryCode = countryMatch ? countryMatch.code : country;
+  
+  const hasPlayersValue = document.getElementById('hasPlayers').value;
+  const hasWhitelistValue = document.getElementById('hasWhitelist').value;
+  const crackedValue = document.getElementById('cracked').value;
+  const serverfullValue = document.getElementById('isFull').value;
+  const hasSampleValue = document.getElementById('hasSample').value;
+
+  const limit = document.getElementById('limit').value || 5;
+  let page = parseInt(document.getElementById('page').value) || currentPage;
+
+  if (page < 1) page = 1;
+  currentPage = page;
+  const skip = limit * (page - 1);
+
+  let url = `https://api.cornbread2100.com/v1/servers?limit=${limit}&skip=${skip}&sort=lastSeen&descending=true`;
+
+  if (version) url += `&version=${encodeURIComponent(version)}`;
+  if (country) url += `&country=${encodeURIComponent(countryCode)}`;
+  if (hasPlayersValue === 'true') url += `&minPlayers=1`;
+  if (hasWhitelistValue !== 'any') url += `&whitelisted=${hasWhitelistValue}`;
+  if (serverfullValue !== 'any') url += `&full=${serverfullValue}`;
+  if (crackedValue !== 'any') url += `&cracked=${crackedValue}`;
+  if (hasSampleValue !== 'any') url += `&hasPlayerSample=${hasSampleValue}`;
+
+  document.getElementById('apiBox').innerHTML = `<a href="${url}" target="_blank" class="text-zinc-500 hover:text-violet-400 transition-colors text-[11px] font-mono">API &nearr;</a>`;
+
+  const container = document.getElementById('results');
+  container.innerHTML = `
+    <tr>
+      <td colspan="9" class="px-5 py-16">
+        <div class="flex flex-col items-center justify-center gap-3">
+          <div class="w-5 h-5 border-2 border-violet-500 border-t-transparent rounded-full animate-spin"></div>
+          <span class="text-zinc-500 text-xs">Searching&hellip;</span>
+        </div>
+      </td>
+    </tr>`;
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+    let current = parseInt(document.getElementById('creditBox').innerText.replace(/\D/g, '')) || 0;
+	const target = data.credits;
+
+	const counter = setInterval(() => {
+	  // the step division is the speed i use 3 cause it doesnt take a year but u can change it if u want
+	  const step = (target - current) / 3; 
+	  current += step;
+
+	  if (Math.abs(target - current) < 1) {
+		current = target;
+		clearInterval(counter);
+	  }
+
+	  document.getElementById('creditBox').innerHTML = `Credits: <span class="font-bold">${Math.round(current).toLocaleString()}</span>`;
+	}, 30);
+    
+    const servers = Array.isArray(data) ? data : (data.servers || data.data || data.results || []);
+    lastServers = servers;
+    displayResults(servers);
+  } catch (err) {
+    container.innerHTML = `<tr><td colspan="9" class="px-5 py-10 text-center text-red-400 text-sm">Connection failed. Try again.</td></tr>`;
+  }
+}
+
+function displayResults(servers) {
+  document.getElementById('tableView').classList.remove('hidden');
+  document.getElementById('detailView').classList.add('hidden');
+
+  const container = document.getElementById('results');
+  container.innerHTML = '';
+  
+
+  if (servers.length === 0) {
+    container.innerHTML = `<tr><td colspan="9" class="px-5 py-10 text-center text-zinc-600 text-sm">No servers matched your filters.</td></tr>`;
+    return;
+  }
+
+  servers.forEach((server, index) => {
+    const row = document.createElement('tr');
+    const online = server.players?.online || 0;
+    
+    row.className = `cursor-pointer enter-up ${online > 0 ? 'online-row' : ''}`;
+    row.style.opacity = '0';
+    row.style.animationDelay = `${index * 0.04}s`;
+
+    const ip = server.ip ? intToIP(server.ip) : 'Unknown';
+    const unix = server.lastSeen;
+
+    row.innerHTML = `
+      <td class="px-5 py-3.5 font-mono text-violet-400 font-medium text-[13px]">${ip}</td>
+      <td class="px-5 py-3.5 text-zinc-500 font-mono text-[13px]">${server.port === 25565 ? '<span class="text-zinc-700">25565</span>' : server.port}</td>
+      <td class="px-5 py-3.5"><span class="pill pill-version">${server.version?.name || 'N/A'}</span></td>
+      <td class="px-5 py-3.5 font-mono text-[13px] ${online > 0 ? 'text-emerald-400 font-semibold' : 'text-zinc-700'}">${online} <span class="text-zinc-600 font-normal">/ ${server.players?.max || 0}</span></td>
+      <td class="px-5 py-3.5 text-zinc-400 flex items-center gap-2"><img src="https://flagcdn.com/16x12/${(server.geo?.country || 'xx').toLowerCase()}.png" class="rounded-sm opacity-70" onerror="this.style.display='none'"> ${server.geo?.country || '<span class="text-zinc-700">&mdash;</span>'}</td>
+      <td class="px-5 py-3.5 text-zinc-500 truncate max-w-[140px] text-[13px]" title="${server.org || ''}">${server.org || '<span class="text-zinc-700">&mdash;</span>'}</td>
+      <td class="px-5 py-3.5">${tick(server.cracked)}</td>
+      <td class="px-5 py-3.5">${tick(server.whitelisted)}</td>
+      <td class="px-5 py-3.5 text-[11px] font-mono text-zinc-600">${timeAgo(unix)}</td>
+    `;
+
+    row.onclick = () => showDetails(server);
+    container.appendChild(row);
+  });
+}
+
+async function showDetails(server) {
+  document.getElementById('tableView').classList.add('hidden');
+  const detailView = document.getElementById('detailView');
+  detailView.classList.remove('hidden');
+  
+  detailView.classList.remove('enter-up');
+  void detailView.offsetWidth; 
+  detailView.classList.add('enter-up');
+
+  const ipStr = intToIP(server.ip);
+  const unix = server.lastSeen;
+  const date = new Date(unix * 1000);
+  const content = document.getElementById('detailContent');
+  
+
+  content.innerHTML = `
+    <div class="flex justify-center items-center py-16">
+      <div class="w-5 h-5 border-2 border-violet-500 border-t-transparent rounded-full animate-spin"></div>
+    </div>`;
+
+  try {
+    const url = `https://api.cornbread2100.com/v1/playerHistory?ip=${server.ip}&port=${server.port}`;
+    const res = await fetch(url);
+    const data = await res.json();
+    const players = data.data || [];
+	
+	let current = parseInt(document.getElementById('creditBox').innerText.replace(/\D/g, '')) || 0;
+	const target = data.credits;
+	const counter = setInterval(() => {
+	  const step = (target - current) / 3; 
+	  current += step;
+
+	  if (Math.abs(target - current) < 1) {
+		current = target;
+		clearInterval(counter);
+	  }
+
+	  document.getElementById('creditBox').innerHTML = `Credits: <span class="font-bold">${Math.round(current).toLocaleString()}</span>`;
+	}, 30);
+	
+	
+
+    content.innerHTML = `
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-7 pb-6 border-b border-zinc-800/60">
+        <div>
+          <h2 class="text-2xl md:text-3xl font-extrabold font-mono text-zinc-100 tracking-tight">
+              ${ipStr}${server.port == 25565 ? '' : `<span class="text-violet-400">:${server.port}</span>`}
+          </h2>
+          <div class="text-sm text-zinc-500 mt-1.5 flex items-center gap-2">
+            <span class="w-1.5 h-1.5 rounded-full ${server.players?.online > 0 ? 'bg-emerald-500' : 'bg-zinc-600'}"></span>
+            ${date.toLocaleString()} &middot; ${timeAgo(unix)}
+          </div>
+        </div>
+
+        <div class="flex gap-2">
+          <button class="btn-secondary px-3.5 py-2 text-sm flex items-center gap-2" onclick="navigator.clipboard.writeText('${ipStr}')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+              Copy IP
+          </button>
+          ${server.port == 25565 ? '' : `
+          <button class="btn-secondary px-3.5 py-2 text-sm flex items-center gap-2" onclick="navigator.clipboard.writeText('${ipStr}:${server.port}')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+              Copy IP:Port
+          </button>
+          `}
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <div class="lg:col-span-2 space-y-5">
+          <div class="card-inset p-5">
+            <h3 class="text-[11px] font-semibold tracking-wide text-zinc-500 uppercase mb-4">Server Info</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3 text-sm">
+              <div class="flex justify-between py-2 border-b border-zinc-800/60"><span class="text-zinc-500">Version</span> <span class="pill pill-version font-mono">${server.version?.name || 'N/A'}</span></div>
+              <div class="flex justify-between py-2 border-b border-zinc-800/60"><span class="text-zinc-500">Provider</span> <span class="text-zinc-300 truncate max-w-[180px] text-right">${server.org || 'N/A'}</span></div>
+              <div class="flex justify-between py-2 border-b border-zinc-800/60"><span class="text-zinc-500">Country</span> <span class="flex items-center gap-2 text-zinc-300">${server.geo?.country || 'N/A'} <img src="https://flagcdn.com/16x12/${(server.geo?.country || 'xx').toLowerCase()}.png" class="rounded-sm" onerror="this.style.display='none'"></span></div>
+              <div class="flex justify-between py-2 border-b border-zinc-800/60"><span class="text-zinc-500">Auth</span> <span>${server.cracked ? '<span class="text-red-400 font-medium">Cracked</span>' : '<span class="text-emerald-400">Premium</span>'}</span></div>
+              <div class="flex justify-between py-2"><span class="text-zinc-500">Whitelist</span> <span>${server.whitelisted ? '<span class="text-amber-400 font-medium">Enabled</span>' : '<span class="text-zinc-400">Off</span>'}</span></div>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="text-[11px] font-semibold tracking-wide text-zinc-500 uppercase mb-2">MOTD</h3>
+            <div class="card-inset p-4 font-mono text-sm text-zinc-400 break-words whitespace-pre-wrap overflow-x-auto">${server.description || '<span class="text-zinc-600 italic">None</span>'}</div>
+          </div>
+        </div>
+
+        <div>
+          <div class="card-inset p-5 h-full flex flex-col">
+            <div class="flex justify-between items-center mb-3">
+              <h3 class="text-[11px] font-semibold tracking-wide text-zinc-500 uppercase">Players</h3>
+              <span class="text-[11px] font-mono font-semibold text-violet-400 bg-violet-500/10 px-2 py-0.5 rounded border border-violet-500/15">
+                ${server.players?.online || 0} / ${server.players?.max || 0}
+              </span>
+            </div>
+            
+            <div class="card-inset p-2.5 flex-grow max-h-[340px] overflow-y-auto">
+              ${players.length ? 
+                `<div class="space-y-1">` + players.map(p => `
+                  <div class="hover:bg-zinc-800/60 transition-colors px-2.5 py-2 rounded-lg text-sm font-mono text-zinc-400 flex items-center gap-2.5">
+                    <img src="https://minotar.net/helm/${p.name}/18.png" class="w-[18px] h-[18px] rounded-sm" onerror="this.style.display='none'">
+                    ${p.name}
+                  </div>`).join('') + `</div>` 
+                : '<div class="flex h-full items-center justify-center text-zinc-600 text-xs">No player history</div>'}
+            </div>
+          </div>
+        </div>
+
+      </div>
+    `;
+  } catch (err) {
+    content.innerHTML = `<div class="text-red-400 text-sm text-center py-8">Failed to load server details.</div>`;
+  }
+}
+
+function goBack() {
+  document.getElementById('detailView').classList.add('hidden');
+  document.getElementById('tableView').classList.remove('hidden');
+}
+
+function nextPage() {
+  currentPage++;
+  document.getElementById('page').value = currentPage;
+  fetchServers();
+}
+
+function prevPage() {
+  if (currentPage > 1) {
+    currentPage--;
+    document.getElementById('page').value = currentPage;
+    fetchServers();
+  }
+}
+
+function feelingLucky() {
+  const versions = ['1.8.9','1.12.2','1.16.1','1.16.5','1.20.1','1.21.1'];
+  document.getElementById('version').value = versions[Math.floor(Math.random()*versions.length)];
+  
+  const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+  document.getElementById('hasPlayers').value = pick(["any", "true"]);
+  const trio = ["any", "true", "false"];
+  document.getElementById('hasWhitelist').value = pick(trio);
+  document.getElementById('isFull').value = pick(trio);
+  document.getElementById('hasSample').value = pick(trio);
+  document.getElementById('cracked').value = pick(trio);
+
+  fetchServers();
+}
+
+function startCreditTimer() {
+  const timeBox = document.getElementById('timeBox');
+  setInterval(() => {
+    const now = new Date();
+    const displayMins = String(59 - now.getMinutes()).padStart(2, '0');
+    const displaySecs = String(59 - now.getSeconds()).padStart(2, '0');
+    timeBox.innerHTML = `Reset: <span class="font-bold">${displayMins}:${displaySecs}</span>`;
+  }, 1000);
+}
+startCreditTimer();
+</script>
+
+</body>
+</html>
