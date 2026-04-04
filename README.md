@@ -1,2 +1,4 @@
 # MCScanner
-funny fancy html thingUses Cornbread2100's server scanner for the API
+funny fancy html thing
+
+##Uses Cornbread2100's server scanner for the API
