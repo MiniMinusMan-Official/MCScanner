@@ -1,0 +1,9 @@
+{
+    "key.mcscanner.open": "Open Server Scanner",
+    "category.mcscanner": "MC Scanner",
+    "mcscanner.title": "Server Scanner",
+    "mcscanner.searching": "Searching...",
+    "mcscanner.no_results": "No servers matched your filters.",
+    "mcscanner.error": "Connection failed. Try again.",
+    "mcscanner.hint": "Press Search or Shuffle to find servers."
+}

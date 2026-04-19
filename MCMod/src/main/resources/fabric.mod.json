@@ -1,0 +1,27 @@
+{
+    "schemaVersion": 1,
+    "id": "mcscanner",
+    "version": "${version}",
+    "name": "MC Scanner",
+    "description": "In-game Minecraft server scanner with search, filters, and detail views. Powered by the cornbread2100 API (https://github.com/kgurchiek/Minecraft-Server-Scanner-Discord-Bot).",
+    "authors": [
+        "Pumpgun",
+        "MiniMinusMan/computer_dj"
+    ],
+    "license": "MIT",
+    "icon": "assets/mcscanner/icon.png",
+    "environment": "client",
+    "entrypoints": {
+        "client": [
+            "com.mcscanner.MCScannerClient"
+        ]
+    },
+    "mixins": [],
+    "depends": {
+        "fabricloader": ">=0.19.2",
+        "minecraft": "~26.1.2",
+        "java": ">=25",
+        "fabric-api": "*"
+    },
+    "suggests": {}
+}
